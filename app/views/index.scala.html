@@ -1,0 +1,63 @@
+@(message: String)
+
+@main("Welcome to Play") {
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript">
+                google.charts.load("current", {packages: ["timeline"]});
+                google.charts.setOnLoadCallback(drawChart);
+
+                function drawChart() {
+                    var container = document.getElementById('example2.1');
+                    var data = document.getElementById('textarea').value;
+                    console.log(data);
+                    var chart = new google.visualization.Timeline(container);
+                    var dataTable = new google.visualization.DataTable();
+
+                    dataTable.addColumn({type: 'string', id: 'Term'});
+                    dataTable.addColumn({type: 'string', id: 'Name'});
+                    dataTable.addColumn({ type: 'string', role: 'tooltip' });
+                    dataTable.addColumn({type: 'number', id: 'Start'});
+                    dataTable.addColumn({type: 'number', id: 'End'});
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', '/api/parse', true);
+                    xhr.setRequestHeader('Content-Type', 'text/plain; charset=UTF-8');
+                    xhr.onload = function () {
+                        console.log("respose:" + this.responseText);
+                        var j = JSON.parse(this.responseText);
+                        j.forEach( function( item ) {
+                            dataTable.addRows([[item.ner , item.word,item.context, item.index*100,item.index*100+99]]);
+                        });
+                        chart.draw(dataTable);
+
+                    };
+                    xhr.send(JSON.stringify(data));
+
+                 }
+
+
+    </script>
+
+
+
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="#">NLP DEMO</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+    </nav>
+
+        <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+        <div class="container">
+            <h1 class="display-3">Text Visualizer</h1>
+            <p>Paste some text into the text area and click Visualize.</p>
+            <textarea id="textarea" rows="10" cols="120"></textarea>
+            <p><a class="btn btn-primary btn-lg" href="#" onclick="drawChart()" role="button">Visualize</a></p>
+        </div>
+    </div>
+    <div id="example2.1"  style="height: 300px; width:5000px" ></div>
+
+}
