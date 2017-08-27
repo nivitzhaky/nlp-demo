@@ -1,4 +1,4 @@
-name := """rad-translate-scala"""
+name := """nlp-demo-scala"""
 
 version := "1.0-SNAPSHOT"
 
