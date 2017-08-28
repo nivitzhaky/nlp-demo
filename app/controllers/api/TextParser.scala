@@ -22,7 +22,10 @@ object TextParser extends Controller with ITextParser {
     }
     val onlyMin = nerMap.filter(x=> x.tokenNo == nerMap.filter(z=>(z.sentenceNo==x.sentenceNo) && (z.ner == x.ner)).map(t=>t.tokenNo).min)
 
-    val json = onlyMin.map(x=>Json.obj("ner"->x.ner, "word"-> x.word, "context"->x.context, "index" -> x.sentenceNo ))
+    val sent = sentences(doc).map(x=> NerWordSnTn("SENTIMENT", sentiment(x._1), x.toString(),x._2,0))
+    println(sent)
+
+    val json = (onlyMin++sent).map(x=>Json.obj("ner"->x.ner, "word"-> x.word, "context"->x.context, "index" -> x.sentenceNo ))
     println(json)
 
     Ok(Json.toJson(json))

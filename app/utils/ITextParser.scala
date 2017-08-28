@@ -7,6 +7,7 @@ import edu.stanford.nlp.ling.CoreLabel
 import edu.stanford.nlp.pipeline._
 import edu.stanford.nlp.semgraph.SemanticGraph
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation
+import edu.stanford.nlp.sentiment.SentimentCoreAnnotations
 import edu.stanford.nlp.trees.Tree
 import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation
 import edu.stanford.nlp.util.CoreMap
@@ -17,7 +18,7 @@ trait ITextParser {
 
   private val pipelineProps = new java.util.Properties()
   val stepsKey = "annotators"
-  pipelineProps.put(stepsKey, "tokenize, ssplit, pos, lemma, ner, parse, dcoref")
+  pipelineProps.put(stepsKey, "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment")
 
   var pipelineInstantiated = false
   val pipelineInstantiatedErrorMsg = "Pipeline already instantiated, can not be altered."
@@ -63,6 +64,9 @@ trait ITextParser {
 
   def tokens(sentence: CoreMap): List[(CoreLabel, Int)] =
     sentence.get(classOf[TokensAnnotation]).asScala.toList.zipWithIndex
+
+  def sentiment(sentence: CoreMap): String =
+    sentence.get(classOf[SentimentCoreAnnotations.SentimentClass])
 
   def word(token: CoreLabel): String = token.get(classOf[TextAnnotation])
 
